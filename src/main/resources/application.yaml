@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: img-proc-assignment
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/assignment?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:guest}
+    password: ${DB_PASSWORD:guest}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: ${SERVER_PORT:8080}
+
+img-proc:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,OPTIONS}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:Content-Type,Idempotency-Key}
+    max-age: ${CORS_MAX_AGE:1h}
+
+  candidate:
+    name: ${CANDIDATE_NAME:심정훈}
+    email: ${CANDIDATE_EMAIL:bak.libra26@gmail.com}
+
+  mock-worker:
+    base-url: ${MOCK_WORKER_BASE_URL:https://dev.realteeth.ai/mock}
+    api-key-issue:
+      interval: 5s
+    http:
+      connect-timeout: ${MOCK_WORKER_CONNECT_TIMEOUT:3s}
+      read-timeout: ${MOCK_WORKER_READ_TIMEOUT:30s}
+
+  job-worker:
+    submit:
+      interval: 5s
+      batch-size: 10
+      concurrency: 3
+      lease-timeout: 1m
+
+    poll:
+      interval: 10s
+      batch-size: 20
+      concurrency: 5
+      lease-timeout: 1m
+
+    recovery:
+      interval: 30s

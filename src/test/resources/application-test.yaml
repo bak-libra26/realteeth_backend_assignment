@@ -1,0 +1,63 @@
+spring:
+
+  application:
+    name: img-proc-assignment-test
+
+  main:
+    banner-mode: off
+
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/img_proc_assignment?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${TEST_DB_USERNAME:guest}
+    password: ${TEST_DB_PASSWORD:guest}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 0
+
+img-proc:
+  cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,OPTIONS
+    allowed-headers: Content-Type,Idempotency-Key
+    max-age: 1h
+
+  instance:
+    id: test-instance
+
+  candidate:
+    name: test-candidate
+    email: test@example.com
+
+  mock-worker:
+    base-url: https://example.com/mock
+    api-key-issue:
+      interval: 1h
+    http:
+      connect-timeout: 1s
+      read-timeout: 1s
+
+  job-worker:
+    submit:
+      interval: 1h
+      batch-size: 10
+      concurrency: 3
+      lease-timeout: 1m
+
+    poll:
+      interval: 1h
+      batch-size: 20
+      concurrency: 5
+      lease-timeout: 1m
+
+    recovery:
+      interval: 1h

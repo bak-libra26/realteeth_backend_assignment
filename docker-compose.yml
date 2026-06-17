@@ -1,0 +1,44 @@
+name: img-proc-assignment
+
+services:
+  app:
+    build: .
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-assignment}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ${MYSQL_USER:-guest}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-guest}
+      MOCK_WORKER_BASE_URL: ${MOCK_WORKER_BASE_URL:-https://dev.realteeth.ai/mock}
+      CANDIDATE_NAME: ${CANDIDATE_NAME:-심정훈}
+      CANDIDATE_EMAIL: ${CANDIDATE_EMAIL:-bak.libra26@gmail.com}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173}
+      CORS_ALLOWED_METHODS: ${CORS_ALLOWED_METHODS:-GET,POST,OPTIONS}
+      CORS_ALLOWED_HEADERS: ${CORS_ALLOWED_HEADERS:-Content-Type,Idempotency-Key}
+      CORS_MAX_AGE: ${CORS_MAX_AGE:-1h}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-assignment}
+      MYSQL_USER: ${MYSQL_USER:-guest}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-guest}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-img-proc-root}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  mysql-data:
